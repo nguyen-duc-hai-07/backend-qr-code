@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.oplearn.project.dto.request.PendingRegisterData;
+import org.oplearn.project.exception.base.InternalServerError;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -26,7 +27,7 @@ public class OtpRedisRepository {
       redisTemplate.opsForValue().set(PENDING_REGISTER_PREFIX + email, json, ttl);
     } catch (JsonProcessingException e) {
       log.error("Lỗi parse JSON khi lưu đăng ký tạm vào Redis: {}", e.getMessage(), e);
-      throw new RuntimeException("Lỗi lưu dữ liệu đăng ký tạm thời");
+      throw new InternalServerError();
     }
   }
 

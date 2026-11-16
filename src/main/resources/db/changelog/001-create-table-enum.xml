@@ -11,10 +11,4 @@
     </sql>
   </changeSet>
 
-  <changeSet id="001-create-auth-provider-enum" author="base">
-    <sql>
-      CREATE TYPE auth_provider_enum AS ENUM ('LOCAL', 'GOOGLE');
-    </sql>
-  </changeSet>
-
 </databaseChangeLog>

@@ -9,6 +9,7 @@ import org.oplearn.project.dto.response.PageResponse;
 import org.oplearn.project.dto.response.UserResponse;
 import org.oplearn.project.entity.User;
 import org.oplearn.project.exception.EmailAlreadyExistedException;
+import org.oplearn.project.exception.PhoneNumberAlreadyExistedException;
 import org.oplearn.project.exception.ProtectedAccountException;
 import org.oplearn.project.exception.UserNotFoundException;
 import org.oplearn.project.exception.UserUnauthorizedException;
@@ -44,17 +45,18 @@ public class UserServiceImpl implements UserService {
     if (repository.existsByUsernameAndIsDeletedFalse(request.getUsername())) {
       throw new UsernameAlreadyExistedException();
     }
-    if (StringUtils.hasText(request.getEmail())
-        && repository.existsByEmailAndIsDeletedFalse(request.getEmail())) {
-      throw new EmailAlreadyExistedException();
+
+    String phone = StringUtils.hasText(request.getPhoneNumber()) ? request.getPhoneNumber().trim() : null;
+    if (phone != null && repository.existsByPhoneNumberAndIsDeletedFalse(phone)) {
+      throw new PhoneNumberAlreadyExistedException();
     }
 
     User user = User.builder()
-        .username(request.getUsername())
+        .username(request.getUsername().trim())
+        .fullName(StringUtils.hasText(request.getFullName()) ? request.getFullName().trim() : request.getUsername().trim())
         .password(passwordEncoder.encode(request.getPassword()))
-        .phoneNumber(request.getPhoneNumber())
-        .email(request.getEmail())
-        .role(request.getRole())
+        .phoneNumber(phone)
+        .role(request.getRole() != null ? request.getRole() : org.oplearn.project.enums.UserRole.USER)
         .build();
 
     return UserResponse.from(repository.save(user));
@@ -90,19 +92,21 @@ public class UserServiceImpl implements UserService {
       throw new ProtectedAccountException();
     }
 
-    if (!Objects.equals(user.getUsername(), request.getUsername())
-        && repository.existsByUsernameAndIsDeletedFalse(request.getUsername())) {
+    if (!Objects.equals(user.getUsername(), request.getUsername().trim())
+        && repository.existsByUsernameAndIsDeletedFalse(request.getUsername().trim())) {
       throw new UsernameAlreadyExistedException();
     }
-    if (StringUtils.hasText(request.getEmail())
-        && !Objects.equals(user.getEmail(), request.getEmail())
-        && repository.existsByEmailAndIsDeletedFalse(request.getEmail())) {
-      throw new EmailAlreadyExistedException();
+    user.setUsername(request.getUsername().trim());
+    if (request.getFullName() != null) {
+      user.setFullName(request.getFullName().trim());
     }
 
-    user.setUsername(request.getUsername());
-    user.setPhoneNumber(request.getPhoneNumber());
-    user.setEmail(request.getEmail());
+    String phone = StringUtils.hasText(request.getPhoneNumber()) ? request.getPhoneNumber().trim() : null;
+    if (phone != null && !Objects.equals(user.getPhoneNumber(), phone)
+        && repository.existsByPhoneNumberAndIsDeletedFalse(phone)) {
+      throw new PhoneNumberAlreadyExistedException();
+    }
+    user.setPhoneNumber(phone);
     // Chỉ đổi mật khẩu khi có nhập
     if (StringUtils.hasText(request.getPassword())) {
       user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -130,7 +134,7 @@ public class UserServiceImpl implements UserService {
         : repository.findAllByIsDeletedFalse(pageable);
 
     return PageResponse.of(
-        users.map(UserResponse::from).getContent(),
+        users.map(u -> UserResponse.from(u)).getContent(),
         (int) users.getTotalElements()
     );
   }
@@ -149,7 +153,7 @@ public class UserServiceImpl implements UserService {
     }
 
     return repository.findByIdAndIsDeletedFalse(id)
-        .map(UserResponse::from)
+        .map(u -> UserResponse.from(u))
         .orElseThrow(UserNotFoundException::new);
   }
 

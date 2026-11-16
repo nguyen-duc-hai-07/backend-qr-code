@@ -1,15 +1,12 @@
 package org.oplearn.project.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.oplearn.project.dto.request.ForgotPasswordRequest;
-import org.oplearn.project.dto.request.GoogleLoginRequest;
 import org.oplearn.project.dto.request.LoginRequest;
 import org.oplearn.project.dto.request.RefreshTokenRequest;
 import org.oplearn.project.dto.request.RegisterRequest;
-import org.oplearn.project.dto.request.ResetPasswordRequest;
-import org.oplearn.project.dto.request.VerifyOtpRequest;
 import org.oplearn.project.dto.response.ResponseGeneral;
 import org.oplearn.project.dto.response.TokenResponse;
 import org.oplearn.project.exception.InvalidRefreshTokenException;
@@ -22,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
 
 import java.util.Objects;
 
@@ -40,7 +35,9 @@ public class AuthController {
   private final RefreshCookieManager cookieManager;
 
   @PostMapping("/login")
-  public ResponseEntity<ResponseGeneral<TokenResponse>> login(@Valid @RequestBody LoginRequest request) {
+  public ResponseEntity<ResponseGeneral<TokenResponse>> login(
+        @Valid @RequestBody LoginRequest request
+  ) {
     log.info("(login) username: {}", request.getUsername());
     return issueWithCookie(service.login(request));
   }
@@ -48,19 +45,17 @@ public class AuthController {
   @PostMapping("/refresh")
   public ResponseEntity<ResponseGeneral<TokenResponse>> refresh(
         HttpServletRequest httpRequest,
-        @RequestBody(required = false) RefreshTokenRequest request
+        @RequestBody(required = false) RefreshTokenRequest body
   ) {
     log.info("(refresh)");
-    // Ưu tiên refresh token trong cookie HttpOnly; fallback body (chỉ dùng cho
-    // lần migrate đầu của user còn giữ token cũ ở localStorage).
-    String refreshToken = cookieManager.read(httpRequest);
-    if (!StringUtils.hasText(refreshToken) && request != null) {
-      refreshToken = request.getRefreshToken();
+    String token = cookieManager.read(httpRequest);
+    if (!StringUtils.hasText(token) && body != null) {
+      token = body.getRefreshToken();
     }
-    if (!StringUtils.hasText(refreshToken)) {
+    if (!StringUtils.hasText(token)) {
       throw new InvalidRefreshTokenException();
     }
-    return issueWithCookie(service.refresh(refreshToken));
+    return issueWithCookie(service.refresh(token));
   }
 
   @PostMapping("/logout")
@@ -79,42 +74,11 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<ResponseGeneral<Void>> register(@Valid @RequestBody RegisterRequest request) {
+  public ResponseEntity<ResponseGeneral<TokenResponse>> register(@Valid @RequestBody RegisterRequest request) {
     log.info("(register) username: {}", request.getUsername());
-    service.register(request);
-    return ResponseEntity.ok(ResponseGeneral.ofSuccess(SUCCESS_MESSAGE));
+    return issueWithCookie(service.register(request));
   }
 
-  @PostMapping("/verify-otp")
-  public ResponseEntity<ResponseGeneral<TokenResponse>> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
-    log.info("(verifyOtp) email: {}", request.getEmail());
-    return issueWithCookie(service.verifyOtp(request));
-  }
-
-  @PostMapping("/forgot-password")
-  public ResponseEntity<ResponseGeneral<Void>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-    log.info("(forgotPassword) email: {}", request.getEmail());
-    service.forgotPassword(request);
-    return ResponseEntity.ok(ResponseGeneral.ofSuccess(SUCCESS_MESSAGE));
-  }
-
-  @PostMapping("/reset-password")
-  public ResponseEntity<ResponseGeneral<Void>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-    log.info("(resetPassword) email: {}", request.getEmail());
-    service.resetPassword(request);
-    return ResponseEntity.ok(ResponseGeneral.ofSuccess(SUCCESS_MESSAGE));
-  }
-
-  @PostMapping("/login/google")
-  public ResponseEntity<ResponseGeneral<TokenResponse>> loginWithGoogle(@Valid @RequestBody GoogleLoginRequest request) {
-    log.info("(loginWithGoogle)");
-    return issueWithCookie(service.loginWithGoogle(request));
-  }
-
-  /**
-   * Đặt refresh token vào cookie HttpOnly và XOÁ khỏi JSON body (JS không đọc
-   * được → chống XSS). Body chỉ còn access token.
-   */
   private ResponseEntity<ResponseGeneral<TokenResponse>> issueWithCookie(TokenResponse tokens) {
     String refreshToken = tokens.getRefreshToken();
     tokens.setRefreshToken(null);
@@ -122,9 +86,9 @@ public class AuthController {
   }
 
   private String extractAccessToken(String authorizationHeader) {
-    if (Objects.isNull(authorizationHeader) || !authorizationHeader.startsWith(TYPE_TOKEN)) {
-      return null;
+    if (Objects.nonNull(authorizationHeader) && authorizationHeader.startsWith(TYPE_TOKEN)) {
+      return authorizationHeader.substring(TYPE_TOKEN.length());
     }
-    return authorizationHeader.substring(TYPE_TOKEN.length());
+    return null;
   }
 }

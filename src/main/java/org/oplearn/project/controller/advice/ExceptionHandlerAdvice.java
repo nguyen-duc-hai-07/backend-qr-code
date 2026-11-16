@@ -9,6 +9,8 @@ import org.oplearn.project.exception.base.BaseException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,7 +39,29 @@ public class ExceptionHandlerAdvice {
     log.error("(handleBaseException) code: {}, status: {}", ex.getCode(), ex.getStatus());
     return ResponseEntity
           .status(ex.getStatus())
-          .body(getError(ex.getStatus(), ex.getCode(), new Locale(getLanguage(webRequest)), ex.getParams()));
+          .body(getError(ex.getStatus(), ex.getCode(), new Locale(getLanguage(webRequest)), ex.getParams(), ex.getMessage()));
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ResponseGeneral<Error>> handleAccessDenied(
+        AccessDeniedException ex,
+        WebRequest webRequest
+  ) {
+    log.error("(handleAccessDenied) {}", ex.getMessage());
+    return ResponseEntity
+          .status(HttpStatus.FORBIDDEN)
+          .body(getError(HttpStatus.FORBIDDEN.value(), "org.oplearn.project.exception.UserUnauthorizedException", getLanguage(webRequest)));
+  }
+
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<ResponseGeneral<Error>> handleAuthenticationException(
+        AuthenticationException ex,
+        WebRequest webRequest
+  ) {
+    log.error("(handleAuthenticationException) {}", ex.getMessage());
+    return ResponseEntity
+          .status(HttpStatus.UNAUTHORIZED)
+          .body(getError(HttpStatus.UNAUTHORIZED.value(), "org.oplearn.project.exception.base.UnauthorizedException", getLanguage(webRequest)));
   }
 
   @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
@@ -104,9 +128,19 @@ public class ExceptionHandlerAdvice {
         WebRequest webRequest
   ) {
     log.error("(handleDataIntegrity)", ex);
+    String code = "error.data.conflict";
+    String exMsg = ex.getMessage() != null ? ex.getMessage() : "";
+    if (ex.getCause() != null && ex.getCause().getMessage() != null) {
+      exMsg += " " + ex.getCause().getMessage();
+    }
+    if (exMsg.contains("users_phone_number_key")) {
+      code = "org.oplearn.project.exception.PhoneNumberAlreadyExistedException";
+    } else if (exMsg.contains("users_username_key")) {
+      code = "org.oplearn.project.exception.UsernameAlreadyExistedException";
+    }
     return ResponseEntity
           .status(HttpStatus.CONFLICT)
-          .body(getError(HttpStatus.CONFLICT.value(), "error.data.conflict", getLanguage(webRequest)));
+          .body(getError(HttpStatus.CONFLICT.value(), code, getLanguage(webRequest)));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -162,18 +196,33 @@ public class ExceptionHandlerAdvice {
   }
 
   private ResponseGeneral<Error> getError(int status, String code, String language) {
+    String resolvedMessage = getMessage(code, new Locale(language));
+    String finalMessage = (resolvedMessage != null && !resolvedMessage.equals(code))
+        ? resolvedMessage
+        : HttpStatus.valueOf(status).getReasonPhrase();
     return ResponseGeneral.of(
           status,
-          HttpStatus.valueOf(status).getReasonPhrase(),
-          Error.of(code, getMessage(code, new Locale(language)))
+          finalMessage,
+          Error.of(code, finalMessage)
     );
   }
 
   private ResponseGeneral<Error> getError(int status, String code, Locale locale, Map<String, String> params) {
+    return getError(status, code, locale, params, null);
+  }
+
+  private ResponseGeneral<Error> getError(int status, String code, Locale locale, Map<String, String> params, String defaultMessage) {
+    String resolvedMessage = getMessage(code, locale, params);
+    if ((resolvedMessage == null || resolvedMessage.equals(code)) && defaultMessage != null && !defaultMessage.isBlank()) {
+      resolvedMessage = defaultMessage;
+    }
+    String finalMessage = (resolvedMessage != null && !resolvedMessage.equals(code))
+        ? resolvedMessage
+        : HttpStatus.valueOf(status).getReasonPhrase();
     return ResponseGeneral.of(
           status,
-          HttpStatus.valueOf(status).getReasonPhrase(),
-          Error.of(code, getMessage(code, locale, params))
+          finalMessage,
+          Error.of(code, finalMessage)
     );
   }
 

@@ -18,4 +18,8 @@ public class InternalServerError extends BaseException {
   public InternalServerError(String message) {
     super(DEFAULT_CODE_SERVER_ERROR, message, SERVER_ERROR, null);
   }
+
+  public InternalServerError(String code, String message) {
+    super(code, message, SERVER_ERROR, null);
+  }
 }

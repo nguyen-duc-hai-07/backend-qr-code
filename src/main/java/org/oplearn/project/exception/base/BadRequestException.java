@@ -13,4 +13,12 @@ public class BadRequestException extends BaseException {
   public BadRequestException(String code) {
     super(code, BLANK_MESSAGE, BAD_REQUEST, null);
   }
+
+  public BadRequestException(String code, String message) {
+    super(code, message, BAD_REQUEST, null);
+  }
+
+  public BadRequestException(String code, java.util.Map<String, String> params) {
+    super(code, BLANK_MESSAGE, BAD_REQUEST, params);
+  }
 }

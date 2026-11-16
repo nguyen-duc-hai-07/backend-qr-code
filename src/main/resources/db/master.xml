@@ -8,5 +8,16 @@
 
   <include file="db/changelog/001-create-table-enum.xml"/>
   <include file="db/changelog/002-create-table-users.xml"/>
+  <include file="db/changelog/003-create-table-store-tables.xml"/>
+  <include file="db/changelog/004-create-table-categories.xml"/>
+  <include file="db/changelog/005-create-table-products.xml"/>
+  <include file="db/changelog/006-create-table-orders.xml"/>
+  <include file="db/changelog/007-create-table-order-items.xml"/>
+  <include file="db/changelog/008-drop-column-shipping-fee.xml"/>
+  <include file="db/changelog/009-add-index-orders-analytics.xml"/>
+  <include file="db/changelog/010-seed-hoangan-menu.xml"/>
+  <include file="db/changelog/011-add-column-products-toppings.xml"/>
+  <include file="db/changelog/012-seed-hoangan-toppings-v2.xml"/>
+  <include file="db/changelog/013-seed-hoangan-official-images.xml"/>
 
 </databaseChangeLog>

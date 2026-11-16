@@ -34,7 +34,7 @@ public class UnAuthenticationCustomHandler implements AuthenticationEntryPoint {
     ResponseGeneral<Error> body = ResponseGeneral.of(
           HttpStatus.UNAUTHORIZED.value(),
           HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-          Error.of("unauthenticated", "Bạn cần đăng nhập để thực hiện thao tác này")
+          Error.of("org.oplearn.project.exception.base.UnauthorizedException", "Bạn cần đăng nhập để thực hiện thao tác này")
     );
     objectMapper.writeValue(response.getWriter(), body);
   }

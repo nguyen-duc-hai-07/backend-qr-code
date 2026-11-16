@@ -1,0 +1,15 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+  <changeSet id="013-clear-all-product-images" author="hoangan" runOnChange="true">
+    <sql><![CDATA[
+      -- Xóa toàn bộ ảnh để giao diện đồng bộ, sạch sẽ, chờ chủ quán tự tải ảnh thật của quán
+      UPDATE products SET image_url = NULL;
+    ]]></sql>
+  </changeSet>
+
+</databaseChangeLog>

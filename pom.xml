@@ -13,7 +13,7 @@
   <artifactId>spring-boot-base-starter</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <name>spring-boot-base-starter</name>
-  <description>Spring Boot 3 + PostgreSQL + JPA + JWT + Redis + Kafka + WebSocket + RustFS/S3 Base Starter Template</description>
+  <description>Spring Boot 3 + PostgreSQL + JPA + JWT + Redis + WebSocket + RustFS/S3 Base Starter Template</description>
 
   <properties>
     <!-- Cố định UTF-8 để file i18n tiếng Việt không vỡ khi build trên máy khác -->
@@ -50,10 +50,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.kafka</groupId>
-      <artifactId>spring-kafka</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -129,15 +125,16 @@
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- ZXing QR Code Generator -->
     <dependency>
-      <groupId>com.google.api-client</groupId>
-      <artifactId>google-api-client</artifactId>
-      <version>2.2.0</version>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>core</artifactId>
+      <version>3.5.3</version>
     </dependency>
     <dependency>
-      <groupId>com.google.http-client</groupId>
-      <artifactId>google-http-client-gson</artifactId>
-      <version>1.44.1</version>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>javase</artifactId>
+      <version>3.5.3</version>
     </dependency>
   </dependencies>
 

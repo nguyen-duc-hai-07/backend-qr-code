@@ -1,0 +1,301 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+  <changeSet id="010-seed-categories" author="hoangan">
+    <sql>
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Signature', 1, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Signature' AND is_deleted = false);
+
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Sinh Tố', 2, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Sinh Tố' AND is_deleted = false);
+
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Nước Ép', 3, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Nước Ép' AND is_deleted = false);
+
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Caffe', 4, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Caffe' AND is_deleted = false);
+
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Sữa chua', 5, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Sữa chua' AND is_deleted = false);
+
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Trà sữa', 6, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Trà sữa' AND is_deleted = false);
+
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Trà hoa quả', 7, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Trà hoa quả' AND is_deleted = false);
+
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Đá xay', 8, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Đá xay' AND is_deleted = false);
+
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Đồ uống khác', 9, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Đồ uống khác' AND is_deleted = false);
+
+      INSERT INTO categories (name, display_order, is_active, is_deleted, created_by, created_at)
+      SELECT 'Ăn vặt', 10, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name = 'Ăn vặt' AND is_deleted = false);
+    </sql>
+  </changeSet>
+
+  <changeSet id="010-seed-products" author="hoangan">
+    <sql>
+      -- 1. Signature
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Phindi hạt dẻ cười', 'Món đặc trưng Hoàng An Coffee', 35000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Signature' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Phindi hạt dẻ cười' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Matcha latte kem hạt dẻ', 'Món đặc trưng Hoàng An Coffee', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Signature' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Matcha latte kem hạt dẻ' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Hồng trà shan kem chessee', 'Món đặc trưng Hoàng An Coffee', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Signature' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Hồng trà shan kem chessee' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Atiso quả mọng', 'Món đặc trưng Hoàng An Coffee', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Signature' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Atiso quả mọng' AND is_deleted = false);
+
+      -- 2. Sinh Tố
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Sinh tố bơ', 'Sinh tố tươi ngon nguyên chất', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sinh Tố' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Sinh tố bơ' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Sinh tố xoài', 'Sinh tố tươi ngon nguyên chất', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sinh Tố' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Sinh tố xoài' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Sinh tố mãng cầu', 'Sinh tố tươi ngon nguyên chất', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sinh Tố' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Sinh tố mãng cầu' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Bơ già dừa non', 'Sinh tố bơ già mix dừa non béo ngậy', 45000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sinh Tố' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Bơ già dừa non' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Xoài già dừa non', 'Sinh tố xoài già mix dừa non thơm ngon', 45000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sinh Tố' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Xoài già dừa non' AND is_deleted = false);
+
+      -- 3. Nước Ép
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Nước ép dưa hấu', 'Nước ép trái cây tươi mát', 35000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Nước Ép' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Nước ép dưa hấu' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Nước ép cam', 'Nước ép cam tươi giàu vitamin C', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Nước Ép' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Nước ép cam' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Nước ép táo', 'Nước ép táo thanh ngọt tự nhiên', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Nước Ép' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Nước ép táo' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Nước ép dứa', 'Nước ép dứa tươi thanh lọc', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Nước Ép' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Nước ép dứa' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Nước ép lựu', 'Nước ép lựu đỏ ngọt mát', 45000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Nước Ép' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Nước ép lựu' AND is_deleted = false);
+
+      -- 4. Caffe
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Caffe đen', 'Cà phê truyền thống đậm đà', 25000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Caffe' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Caffe đen' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Caffe sữa', 'Cà phê sữa thơm béo hài hòa', 30000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Caffe' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Caffe sữa' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Bạc xỉu', 'Bạc xỉu ngọt dịu béo thơm', 35000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Caffe' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Bạc xỉu' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Caffe kem muối', 'Cà phê kem muối béo mặn đặc trưng', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Caffe' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Caffe kem muối' AND is_deleted = false);
+
+      -- 5. Sữa chua
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Sữa chua đánh đá', 'Sữa chua dẻo thơm mát lạnh', 30000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sữa chua' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Sữa chua đánh đá' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Sữa chua caffe', 'Sữa chua hòa quyện cà phê đậm vị', 35000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sữa chua' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Sữa chua caffe' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Sữa chua việt quất', 'Sữa chua sốt việt quất chua ngọt', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sữa chua' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Sữa chua việt quất' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Sữa chua yến mạch', 'Sữa chua yến mạch bổ dưỡng', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sữa chua' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Sữa chua yến mạch' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Sữa chua hoa quả', 'Sữa chua mix hoa quả tươi', 45000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Sữa chua' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Sữa chua hoa quả' AND is_deleted = false);
+
+      -- 6. Trà sữa
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Hồng trà sữa', 'Trà sữa truyền thống thơm ngon', 35000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Trà sữa' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Hồng trà sữa' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Trà sữa gạo rang kem hạt dẻ', 'Trà sữa gạo rang thơm bùi kem hạt dẻ', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Trà sữa' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Trà sữa gạo rang kem hạt dẻ' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Hồng trà shan chocolate', 'Hồng trà shan tuyết hương chocolate đậm đà', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Trà sữa' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Hồng trà shan chocolate' AND is_deleted = false);
+
+      -- 7. Trà hoa quả
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Trà cam quả mọng', 'Trà cam tươi hòa quyện quả mọng chua ngọt', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Trà hoa quả' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Trà cam quả mọng' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Trà lựu ngọc trai', 'Trà lựu đỏ thanh mát kèm trân châu ngọc trai', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Trà hoa quả' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Trà lựu ngọc trai' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Trà đào bưởi hồng', 'Trà đào thơm ngát kết hợp tép bưởi hồng', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Trà hoa quả' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Trà đào bưởi hồng' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Trà đào cam xả', 'Trà đào cam sả thanh nhiệt giải khát', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Trà hoa quả' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Trà đào cam xả' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Trà chanh nha đam', 'Trà chanh tươi chua dịu thạch nha đam giòn sần sật', 25000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Trà hoa quả' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Trà chanh nha đam' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Trà lựu kem chessee', 'Trà lựu đỏ thơm phủ lớp kem cheese béo ngậy', 45000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Trà hoa quả' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Trà lựu kem chessee' AND is_deleted = false);
+
+      -- 8. Đá xay
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Chocolate đá xay', 'Chocolate xay mịn mát lạnh đậm vị', 45000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Đá xay' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Chocolate đá xay' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Matcha đá xay', 'Matcha Nhật Bản xay mịn thơm béo', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Đá xay' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Matcha đá xay' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Cốt dừa caffe', 'Cốt dừa đá xay kết hợp cà phê thơm ngát', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Đá xay' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Cốt dừa caffe' AND is_deleted = false);
+
+      -- 9. Đồ uống khác
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Matcha latte', 'Matcha latte sữa tươi thanh ngọt', 35000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Đồ uống khác' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Matcha latte' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Cacao kem muối', 'Cacao đậm đặc phủ kem muối béo ngậy', 40000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Đồ uống khác' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Cacao kem muối' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Bò húc', 'Nước tăng lực Redbull lon', 20000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Đồ uống khác' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Bò húc' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Sting đỏ/vàng', 'Nước ngọt tăng lực Sting', 15000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Đồ uống khác' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Sting đỏ/vàng' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Nước lọc', 'Nước tinh khiết đóng chai', 10000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Đồ uống khác' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Nước lọc' AND is_deleted = false);
+
+      -- 10. Ăn vặt
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Bánh ngọt', 'Bánh ngọt ăn kèm trà cà phê', 35000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Ăn vặt' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Bánh ngọt' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Bỏng ngô', 'Bỏng ngô giòn tan bắp rang bơ', 25000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Ăn vặt' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Bỏng ngô' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Xúc xích', 'Xúc xích nướng / chiên thơm lừng (1 cái)', 10000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Ăn vặt' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Xúc xích' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Khoai tây chiên', 'Khoai tây chiên giòn rụm', 30000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Ăn vặt' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Khoai tây chiên' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Mì tôm hộp', 'Mì tôm hộp nóng hổi', 15000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Ăn vặt' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Mì tôm hộp' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Khô bò', 'Khô bò cay thơm đậm đà', 25000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Ăn vặt' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Khô bò' AND is_deleted = false);
+
+      INSERT INTO products (category_id, name, description, price, is_available, is_deleted, created_by, created_at)
+      SELECT id, 'Khô gà', 'Khô gà lá chanh giòn ngon', 25000.00, true, false, 'SYSTEM', CURRENT_TIMESTAMP
+      FROM categories WHERE name = 'Ăn vặt' AND is_deleted = false
+      AND NOT EXISTS (SELECT 1 FROM products WHERE name = 'Khô gà' AND is_deleted = false);
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

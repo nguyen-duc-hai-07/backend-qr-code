@@ -1,8 +1,8 @@
 package org.oplearn.project.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -12,10 +12,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.oplearn.project.enums.UserRole;
 
-/**
- * Payload cập nhật user (admin sửa thông tin / nâng vai trò hoặc user tự sửa profile).
- * Password là tuỳ chọn: chỉ đổi mật khẩu khi có nhập giá trị.
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -26,14 +22,14 @@ public class UserUpdateRequest {
   @NotBlank(message = "user.username.not_blank")
   private String username;
 
-  private String phoneNumber;
+  @JsonAlias({"fullName", "full_name"})
+  private String fullName;
 
-  @Email(message = "user.email.invalid")
-  private String email;
+  @JsonAlias({"phoneNumber", "phone_number"})
+  private String phoneNumber;
 
   private UserRole role;
 
-  /** Bỏ trống = giữ nguyên mật khẩu; có nhập thì tối thiểu 8 ký tự. */
   @Size(min = 8, message = "user.password.min_length")
   private String password;
 }

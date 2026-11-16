@@ -1,0 +1,22 @@
+package org.oplearn.project.dto.request;
+
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public class CategoryRequest {
+
+  @NotBlank(message = "category.name.not_blank")
+  private String name;
+
+  private Integer displayOrder;
+
+  private Boolean isActive;
+}

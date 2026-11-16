@@ -49,7 +49,11 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
               Long userId = number.longValue();
               attributes.put("userId", userId);
               attributes.put("username", claims.getSubject());
-              log.info("🔑 [WebSocket Handshake] Xác thực thành công userId = {}, username = {}", userId, claims.getSubject());
+              Object roles = claims.get("roles");
+              if (roles != null) {
+                attributes.put("roles", roles);
+              }
+              log.info("🔑 [WebSocket Handshake] Xác thực thành công userId = {}, username = {}, roles = {}", userId, claims.getSubject(), roles);
             }
           } else {
             log.warn("⚠️ [WebSocket Handshake] Token không phải access token hoặc đã bị blacklist");

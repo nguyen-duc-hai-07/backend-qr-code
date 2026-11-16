@@ -1,5 +1,7 @@
 package org.oplearn.project.dto.response;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,12 +15,13 @@ import java.time.Instant;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserResponse {
   private Long id;
   private Instant createdAt;
   private String username;
+  private String fullName;
   private String phoneNumber;
-  private String email;
   private UserRole role;
   private Instant updatedAt;
 
@@ -27,8 +30,8 @@ public class UserResponse {
         user.getId(),
         user.getCreatedAt(),
         user.getUsername(),
+        user.getFullName(),
         user.getPhoneNumber(),
-        user.getEmail(),
         user.getRole(),
         user.getUpdatedAt()
     );

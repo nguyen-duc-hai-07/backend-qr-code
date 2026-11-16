@@ -1,6 +1,5 @@
 package org.oplearn.project.repository;
 
-import org.oplearn.project.enums.AuthProvider;
 import org.oplearn.project.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,19 +18,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   boolean existsByUsernameAndIsDeletedFalse(String username);
 
-  boolean existsByEmailAndIsDeletedFalse(String email);
+  boolean existsByPhoneNumberAndIsDeletedFalse(String phoneNumber);
+
+  Optional<User> findByPhoneNumberAndIsDeletedFalse(String phoneNumber);
 
   Page<User> findAllByIsDeletedFalse(Pageable pageable);
-
-  Optional<User> findByEmailAndIsDeletedFalse(String email);
-
-  Optional<User> findByProviderAndProviderIdAndIsDeletedFalse(AuthProvider provider, String providerId);
 
   @Query("""
         select u from User u
         where u.isDeleted = false
-          and (lower(u.email) like lower(concat('%', :keyword, '%'))
-           or lower(u.username) like lower(concat('%', :keyword, '%')))
+          and (lower(u.fullName) like lower(concat('%', :keyword, '%'))
+           or lower(u.username) like lower(concat('%', :keyword, '%'))
+           or u.phoneNumber like concat('%', :keyword, '%'))
         """)
   Page<User> search(@Param("keyword") String keyword, Pageable pageable);
 

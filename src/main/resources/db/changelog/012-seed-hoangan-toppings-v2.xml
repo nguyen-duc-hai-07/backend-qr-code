@@ -1,0 +1,47 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+  <changeSet id="012-seed-hoangan-toppings-v2" author="hoangan" runOnChange="true">
+    <sql><![CDATA[
+      -- 1. Trà sữa: Đầy đủ 6 loại topping
+      UPDATE products
+      SET toppings = '[{"name": "Trân châu đen", "price": 10000}, {"name": "Trân châu trắng", "price": 5000}, {"name": "Kem chessee", "price": 10000}, {"name": "Kem hạt dẻ cười", "price": 10000}, {"name": "Hạt nổ", "price": 5000}, {"name": "Nha đam", "price": 5000}]'::jsonb
+      WHERE name ILIKE '%trà sữa%'
+         OR category_id IN (SELECT id FROM categories WHERE name ILIKE '%trà sữa%');
+
+      -- 2. Trà hoa quả: Hạt nổ, Trân châu trắng, Nha đam, Kem chessee
+      UPDATE products
+      SET toppings = '[{"name": "Hạt nổ", "price": 5000}, {"name": "Trân châu trắng", "price": 5000}, {"name": "Nha đam", "price": 5000}, {"name": "Kem chessee", "price": 10000}]'::jsonb
+      WHERE name ILIKE '%trà đào%' OR name ILIKE '%trà vải%' OR name ILIKE '%trà chanh%' OR name ILIKE '%trà ổi%' OR name ILIKE '%trà dâu%' OR name ILIKE '%trà sen%' OR name ILIKE '%trà hoa quả%' OR name ILIKE '%trà trái cây%' OR name ILIKE '%atiso%'
+         OR category_id IN (SELECT id FROM categories WHERE name ILIKE '%trà hoa quả%' OR name ILIKE '%trà trái cây%');
+
+      -- 3. Caffe, Signature, Phindi: Kem hạt dẻ cười, Kem chessee, Trân châu đen, Trân châu trắng
+      UPDATE products
+      SET toppings = '[{"name": "Kem hạt dẻ cười", "price": 10000}, {"name": "Kem chessee", "price": 10000}, {"name": "Trân châu đen", "price": 10000}, {"name": "Trân châu trắng", "price": 5000}]'::jsonb
+      WHERE name ILIKE '%phindi%' OR name ILIKE '%hạt dẻ%' OR name ILIKE '%cà phê%' OR name ILIKE '%cafe%' OR name ILIKE '%caffe%' OR name ILIKE '%latte%' OR name ILIKE '%cappuccino%' OR name ILIKE '%espresso%' OR name ILIKE '%bạc xỉu%' OR name ILIKE '%đen đá%' OR name ILIKE '%nâu đá%'
+         OR category_id IN (SELECT id FROM categories WHERE name ILIKE '%caffe%' OR name ILIKE '%cà phê%' OR name ILIKE '%cafe%' OR name ILIKE '%signature%');
+
+      -- 4. Đá xay: Kem chessee, Kem hạt dẻ cười, Trân châu đen, Trân châu trắng
+      UPDATE products
+      SET toppings = '[{"name": "Kem chessee", "price": 10000}, {"name": "Kem hạt dẻ cười", "price": 10000}, {"name": "Trân châu đen", "price": 10000}, {"name": "Trân châu trắng", "price": 5000}]'::jsonb
+      WHERE name ILIKE '%đá xay%' OR name ILIKE '%freeze%' OR name ILIKE '%cookie%'
+         OR category_id IN (SELECT id FROM categories WHERE name ILIKE '%đá xay%');
+
+      -- 5. Sữa chua, Sinh Tố, Nước Ép: Nha đam, Hạt nổ, Trân châu trắng
+      UPDATE products
+      SET toppings = '[{"name": "Nha đam", "price": 5000}, {"name": "Hạt nổ", "price": 5000}, {"name": "Trân châu trắng", "price": 5000}]'::jsonb
+      WHERE name ILIKE '%sinh tố%' OR name ILIKE '%nước ép%' OR name ILIKE '%sữa chua%'
+         OR category_id IN (SELECT id FROM categories WHERE name ILIKE '%sinh tố%' OR name ILIKE '%nước ép%' OR name ILIKE '%sữa chua%');
+
+      -- 6. Đồ uống khác: Matcha & Cacao
+      UPDATE products
+      SET toppings = '[{"name": "Kem chessee", "price": 10000}, {"name": "Kem hạt dẻ cười", "price": 10000}, {"name": "Trân châu đen", "price": 10000}, {"name": "Trân châu trắng", "price": 5000}]'::jsonb
+      WHERE name ILIKE '%matcha%' OR name ILIKE '%cacao%';
+    ]]></sql>
+  </changeSet>
+
+</databaseChangeLog>

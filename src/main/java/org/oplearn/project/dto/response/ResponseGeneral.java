@@ -27,6 +27,10 @@ public class ResponseGeneral<T> {
     return of(HttpStatus.OK.value(), message, data, DateUtils.getCurrentDateString());
   }
 
+  public static <T> ResponseGeneral<T> ofSuccess(T data) {
+    return of(HttpStatus.OK.value(), "Success", data, DateUtils.getCurrentDateString());
+  }
+
   public static <T> ResponseGeneral<T> ofSuccess(String message) {
     return of(HttpStatus.OK.value(), message, (T) null, DateUtils.getCurrentDateString());
   }

@@ -102,6 +102,14 @@ public class RefreshCookieManager {
           .body(body);
   }
 
+  public <T> ResponseEntity<T> withCookie(String refreshToken, T body) {
+    return withRefreshCookie(body, refreshToken);
+  }
+
+  public <T> ResponseEntity<T> withCookie(T body, String refreshToken) {
+    return withRefreshCookie(body, refreshToken);
+  }
+
   /** Bọc body vào ResponseEntity kèm Set-Cookie xoá refresh token. */
   public <T> ResponseEntity<T> withClearedCookie(T body) {
     return ResponseEntity.ok()

@@ -1,0 +1,61 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+  <changeSet id="011-add-toppings-column-to-products" author="hoangan">
+    <addColumn tableName="products">
+      <column name="toppings" type="JSONB" defaultValueComputed="'[]'::jsonb">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="011-seed-hoangan-official-toppings" author="hoangan">
+    <sql><![CDATA[
+      -- 1. Trà sữa: Đầy đủ cả 6 loại topping
+      UPDATE products
+      SET toppings = '[{"name": "Trân châu đen", "price": 10000}, {"name": "Trân châu trắng", "price": 5000}, {"name": "Kem chessee", "price": 10000}, {"name": "Kem hạt dẻ cười", "price": 10000}, {"name": "Hạt nổ", "price": 5000}, {"name": "Nha đam", "price": 5000}]'::jsonb
+      WHERE category_id IN (SELECT id FROM categories WHERE name = 'Trà sữa' AND is_deleted = false);
+
+      -- 2. Trà hoa quả: Hạt nổ, Trân châu trắng, Nha đam, Kem chessee
+      UPDATE products
+      SET toppings = '[{"name": "Hạt nổ", "price": 5000}, {"name": "Trân châu trắng", "price": 5000}, {"name": "Nha đam", "price": 5000}, {"name": "Kem chessee", "price": 10000}]'::jsonb
+      WHERE category_id IN (SELECT id FROM categories WHERE name = 'Trà hoa quả' AND is_deleted = false);
+
+      -- 3. Signature & Caffe: Kem chessee, Kem hạt dẻ cười, Trân châu đen
+      UPDATE products
+      SET toppings = '[{"name": "Kem hạt dẻ cười", "price": 10000}, {"name": "Kem chessee", "price": 10000}, {"name": "Trân châu đen", "price": 10000}]'::jsonb
+      WHERE category_id IN (SELECT id FROM categories WHERE name IN ('Caffe', 'Signature') AND is_deleted = false);
+
+      -- Thêm riêng topping cho Hồng trà shan kem chessee & Atiso quả mọng (thuộc Signature)
+      UPDATE products
+      SET toppings = '[{"name": "Kem chessee", "price": 10000}, {"name": "Trân châu trắng", "price": 5000}, {"name": "Trân châu đen", "price": 10000}, {"name": "Hạt nổ", "price": 5000}, {"name": "Nha đam", "price": 5000}]'::jsonb
+      WHERE name = 'Hồng trà shan kem chessee';
+
+      UPDATE products
+      SET toppings = '[{"name": "Hạt nổ", "price": 5000}, {"name": "Nha đam", "price": 5000}, {"name": "Trân châu trắng", "price": 5000}, {"name": "Kem chessee", "price": 10000}]'::jsonb
+      WHERE name = 'Atiso quả mọng';
+
+      -- 4. Đá xay: Kem chessee, Kem hạt dẻ cười, Trân châu đen, Trân châu trắng
+      UPDATE products
+      SET toppings = '[{"name": "Kem chessee", "price": 10000}, {"name": "Kem hạt dẻ cười", "price": 10000}, {"name": "Trân châu đen", "price": 10000}, {"name": "Trân châu trắng", "price": 5000}]'::jsonb
+      WHERE category_id IN (SELECT id FROM categories WHERE name = 'Đá xay' AND is_deleted = false);
+
+      -- 5. Sữa chua, Sinh Tố, Nước Ép: Nha đam, Hạt nổ, Trân châu trắng
+      UPDATE products
+      SET toppings = '[{"name": "Nha đam", "price": 5000}, {"name": "Hạt nổ", "price": 5000}, {"name": "Trân châu trắng", "price": 5000}]'::jsonb
+      WHERE category_id IN (SELECT id FROM categories WHERE name IN ('Sữa chua', 'Sinh Tố', 'Nước Ép') AND is_deleted = false);
+
+      -- 6. Đồ uống khác: Matcha latte & Cacao kem muối
+      UPDATE products
+      SET toppings = '[{"name": "Kem chessee", "price": 10000}, {"name": "Kem hạt dẻ cười", "price": 10000}, {"name": "Trân châu đen", "price": 10000}, {"name": "Trân châu trắng", "price": 5000}]'::jsonb
+      WHERE name IN ('Matcha latte', 'Cacao kem muối');
+
+      -- Bò húc, Sting, Nước lọc & Toàn bộ Đồ ăn vặt giữ nguyên không có topping ('[]')
+    ]]></sql>
+  </changeSet>
+
+</databaseChangeLog>

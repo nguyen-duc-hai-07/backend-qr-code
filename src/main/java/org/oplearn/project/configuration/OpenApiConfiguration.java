@@ -1,5 +1,7 @@
 package org.oplearn.project.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -32,5 +34,15 @@ public class OpenApiConfiguration {
           .scheme("bearer")
           .bearerFormat("JWT")
           .description("Nhập JWT token theo cú pháp: Bearer <access_token>")));
+  }
+
+  /**
+   * Đăng ký ModelResolver để Swagger / OpenAPI tự động kế thừa toàn bộ cấu hình ObjectMapper của Spring Boot,
+   * bao gồm quy tắc SNAKE_CASE (spring.jackson.property-naming-strategy: SNAKE_CASE).
+   * Giúp toàn bộ schema và example trên giao diện Swagger tự động đổi sang snake_case (full_name, phone_number,...).
+   */
+  @Bean
+  public ModelResolver modelResolver(ObjectMapper objectMapper) {
+    return new ModelResolver(objectMapper);
   }
 }

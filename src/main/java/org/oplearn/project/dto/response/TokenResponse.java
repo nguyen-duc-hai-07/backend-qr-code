@@ -14,4 +14,8 @@ public class TokenResponse {
   private String refreshToken;
   private String tokenType;
   private long expiresIn;
+
+  public TokenResponse withoutRefreshToken() {
+    return TokenResponse.of(this.accessToken, null, this.tokenType, this.expiresIn);
+  }
 }

@@ -5,11 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.oplearn.project.dto.response.FileResponse;
 import org.oplearn.project.dto.response.ResponseGeneral;
 import org.oplearn.project.service.impl.S3StorageService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.oplearn.project.constants.OpLearnConstants.CommonConstants.CREATED_MESSAGE;
@@ -31,11 +37,39 @@ public class FileController {
     return ResponseGeneral.ofCreated(CREATED_MESSAGE, fileResponse);
   }
 
+  @GetMapping("/view/{fileName}")
+  public ResponseEntity<Resource> viewFile(@PathVariable String fileName) {
+    try {
+      Path filePath = Paths.get("uploads").resolve(fileName).normalize();
+      Resource resource = new UrlResource(filePath.toUri());
+      if (resource.exists() && resource.isReadable()) {
+        String contentType = Files.probeContentType(filePath);
+        if (contentType == null) {
+          contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(contentType))
+            .body(resource);
+      }
+      return ResponseEntity.notFound().build();
+    } catch (Exception e) {
+      log.error("(viewFile) Error reading local file: {}", fileName, e);
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
 
   @DeleteMapping
   public ResponseGeneral<Void> deleteFile(@RequestParam("file_name") String fileName) {
     log.info("(deleteFile) fileName: {}", fileName);
     s3StorageService.deleteImage(fileName);
+    return ResponseGeneral.ofSuccess(SUCCESS_MESSAGE);
+  }
+
+  @DeleteMapping("/clear-all")
+  public ResponseGeneral<Void> clearAllFiles() {
+    log.info("(clearAllFiles) Xóa sạch toàn bộ file trong storage bucket");
+    s3StorageService.clearAllBucketFiles();
     return ResponseGeneral.ofSuccess(SUCCESS_MESSAGE);
   }
 

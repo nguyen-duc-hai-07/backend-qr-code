@@ -67,18 +67,17 @@ public class OpLearnConstants {
       "/actuator/metrics",
       "/actuator/metrics/**",
       "/api/v1/cache/**",
-      "/ws/**"
+      "/ws/**",
+      "/api/v1/tables/qr/**",
+      "/api/v1/tables/*/qr-code",
+      "/api/v1/orders/track/**"
     };
 
     public static final String[] MATCHER_AUTH_PUBLIC_API = {
       "/api/v1/auth/login",
       "/api/v1/auth/register",
-      "/api/v1/auth/verify-otp",
-      "/api/v1/auth/forgot-password",
-      "/api/v1/auth/reset-password",
       "/api/v1/auth/refresh",
-      "/api/v1/auth/logout",
-      "/api/v1/auth/login/google"
+      "/api/v1/auth/logout"
     };
 
     public static final String[] MATCHER_ADMIN_API = {"/api/v1/admin/**"};
@@ -107,13 +106,5 @@ public class OpLearnConstants {
     public static final String[] ALL_CACHE_NAMES = {
       CACHE_USERS
     };
-  }
-
-  public static class KafkaConstant {
-    private KafkaConstant() {
-    }
-
-    public static final String TOPIC_AUTH_REGISTRATION_OTP = "auth.registration.otp";
-    public static final String TOPIC_AUTH_FORGOT_PASSWORD_OTP = "auth.forgot-password.otp";
   }
 }

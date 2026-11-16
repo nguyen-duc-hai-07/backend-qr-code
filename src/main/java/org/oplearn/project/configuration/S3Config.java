@@ -14,25 +14,37 @@ import java.net.URI;
 @Configuration
 public class S3Config {
 
-  @Value("${aws.s3.endpoint:https://rustfs.tuvidausotoanthu.vn}")
+  @Value("${aws.s3.endpoint:}")
   private String endpoint;
 
   @Value("${aws.s3.region:us-east-1}")
   private String region;
 
-  @Value("${aws.s3.access-key:tuviadmin}")
+  @Value("${aws.s3.access-key:}")
   private String accessKey;
 
-  @Value("${aws.s3.secret-key:bdd21afecd0f29be9fa6c523b27415c22c8e650c6dfe7a3b}")
+  @Value("${aws.s3.secret-key:}")
   private String secretKey;
 
   @Bean
   public S3Client s3Client() {
+    String resolvedEndpoint = (endpoint != null && !endpoint.isBlank())
+        ? endpoint
+        : "http://localhost:9000";
+
+    String resolvedAccessKey = (accessKey != null && !accessKey.isBlank())
+        ? accessKey
+        : "default";
+
+    String resolvedSecretKey = (secretKey != null && !secretKey.isBlank())
+        ? secretKey
+        : "default";
+
     return S3Client.builder()
-      .endpointOverride(URI.create(endpoint))
+      .endpointOverride(URI.create(resolvedEndpoint))
       .region(Region.of(region))
       .credentialsProvider(StaticCredentialsProvider.create(
-        AwsBasicCredentials.create(accessKey, secretKey)
+        AwsBasicCredentials.create(resolvedAccessKey, resolvedSecretKey)
       ))
       .serviceConfiguration(S3Configuration.builder()
         .pathStyleAccessEnabled(true)
