@@ -20,5 +20,9 @@ public interface StoreTableRepository extends JpaRepository<StoreTable, Long> {
 
   boolean existsByLocationNameAndIsDeletedFalse(String locationName);
 
+  boolean existsByLocationNameAndZoneAndIsDeletedFalse(String locationName, String zone);
+
   boolean existsByLocationNameAndIdNotAndIsDeletedFalse(String locationName, Long id);
+
+  boolean existsByLocationNameAndZoneAndIdNotAndIsDeletedFalse(String locationName, String zone, Long id);
 }

@@ -37,6 +37,10 @@ public interface OrderFacadeService {
 
   OrderResponse removeOrderItem(Long orderId, Long itemId);
 
+  OrderResponse exchangeOrderItem(Long orderId, Long itemId, org.oplearn.project.dto.request.OrderItemRequest request);
+
+  OrderResponse addOrderItem(Long orderId, org.oplearn.project.dto.request.OrderItemRequest request);
+
   void delete(Long id);
   default void deleteOrder(Long id) {
     delete(id);

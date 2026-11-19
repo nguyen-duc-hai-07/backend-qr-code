@@ -29,6 +29,8 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
+      timeout: 3000ms
+      connect-timeout: 3000ms
   liquibase:
     change-log: classpath:db/master.xml
   mail:
@@ -48,7 +50,7 @@ spring:
           writetimeout: 5000
 
 server:
-  port: ${PORT:8088}
+  port: ${PORT:8089}
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript,image/svg+xml
@@ -59,6 +61,7 @@ app:
     cookie:
       secure: ${AUTH_COOKIE_SECURE:false}
       same-site: ${AUTH_COOKIE_SAME_SITE:Lax}
+  menu-base-url: ${APP_MENU_BASE_URL:http://localhost:3001/menu}
 
 management:
   health:

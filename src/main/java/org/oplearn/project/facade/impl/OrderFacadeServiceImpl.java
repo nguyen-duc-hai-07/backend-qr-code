@@ -292,7 +292,7 @@ public class OrderFacadeServiceImpl implements OrderFacadeService {
     log.info("(OrderFacade) removeOrderItem order id: {}, item id: {}", orderId, itemId);
     OrderResponse order = orderService.detail(orderId);
 
-    if (!OrderStatus.PENDING.equals(order.getStatus())) {
+    if (!OrderStatus.PENDING.equals(order.getStatus()) && !OrderStatus.PREPARING.equals(order.getStatus())) {
       throw new OrderStatusNotPendingException();
     }
 
@@ -320,6 +320,149 @@ public class OrderFacadeServiceImpl implements OrderFacadeService {
     // Bắn WebSocket Real-time khi món bị xóa/điều chỉnh
     String notifyMessage = "Đơn hàng " + updatedOrder.getOrderCode() + " vừa được điều chỉnh món";
     echoWebSocketHandler.broadcastOrderEvent("ORDER_ITEM_REMOVED", updatedOrder, notifyMessage);
+
+    return updatedOrder;
+  }
+
+  @Override
+  @Transactional
+  public OrderResponse exchangeOrderItem(Long orderId, Long itemId, OrderItemRequest request) {
+    log.info("(OrderFacade) exchangeOrderItem order id: {}, item id: {}, new product id: {}", orderId, itemId, request.getProductId());
+    OrderResponse order = orderService.detail(orderId);
+
+    if (!OrderStatus.PENDING.equals(order.getStatus()) && !OrderStatus.PREPARING.equals(order.getStatus())) {
+      throw new OrderStatusNotPendingException();
+    }
+
+    ProductResponse product = productService.detail(request.getProductId());
+    if (Boolean.FALSE.equals(product.getIsAvailable())) {
+      throw new ProductUnavailableException(product.getName());
+    }
+
+    BigDecimal unitPrice = product.getPrice();
+    BigDecimal extraPriceTotal = BigDecimal.ZERO;
+    List<OrderItemOptionRequest> optionRequests = request.getOptions();
+
+    if (optionRequests != null) {
+      for (OrderItemOptionRequest opt : optionRequests) {
+        if (opt.getExtraPrice() != null) {
+          extraPriceTotal = extraPriceTotal.add(opt.getExtraPrice());
+        }
+      }
+    }
+
+    BigDecimal itemUnitPrice = unitPrice.add(extraPriceTotal);
+    int qty = request.getQuantity() != null && request.getQuantity() > 0 ? request.getQuantity() : 1;
+    BigDecimal subtotal = itemUnitPrice.multiply(BigDecimal.valueOf(qty));
+
+    String optionsJson = "[]";
+    if (optionRequests != null && !optionRequests.isEmpty()) {
+      try {
+        optionsJson = objectMapper.writeValueAsString(optionRequests);
+      } catch (JsonProcessingException e) {
+        log.warn("Could not serialize options to JSON", e);
+      }
+    }
+
+    // 1. Soft delete old item
+    orderItemService.deleteItem(itemId);
+
+    // 2. Save replacement item
+    OrderItemSaveRequest newItem = OrderItemSaveRequest.builder()
+        .orderId(orderId)
+        .productId(product.getId())
+        .productName(product.getName())
+        .quantity(qty)
+        .unitPrice(unitPrice)
+        .options(optionsJson)
+        .subtotal(subtotal)
+        .note(request.getNote())
+        .build();
+
+    orderItemService.save(newItem);
+
+    // 3. Recalculate totals
+    List<OrderItemResponse> allItems = orderItemService.getByOrderId(orderId);
+    BigDecimal newSubtotal = allItems.stream()
+        .map(OrderItemResponse::getSubtotal)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    BigDecimal newTotal = newSubtotal;
+
+    OrderResponse updatedOrder = orderService.updateTotals(orderId, newSubtotal, newTotal, order.getStatus());
+    enrichOrderResponse(updatedOrder);
+
+    String notifyMessage = "Đơn hàng " + updatedOrder.getOrderCode() + " vừa được đổi sang món " + product.getName();
+    echoWebSocketHandler.broadcastOrderEvent("ORDER_ITEM_EXCHANGED", updatedOrder, notifyMessage);
+
+    return updatedOrder;
+  }
+
+  @Override
+  @Transactional
+  public OrderResponse addOrderItem(Long orderId, OrderItemRequest request) {
+    log.info("(OrderFacade) addOrderItem order id: {}, product id: {}", orderId, request.getProductId());
+    OrderResponse order = orderService.detail(orderId);
+
+    if (!OrderStatus.PENDING.equals(order.getStatus()) && !OrderStatus.PREPARING.equals(order.getStatus())) {
+      throw new OrderStatusNotPendingException();
+    }
+
+    ProductResponse product = productService.detail(request.getProductId());
+    if (Boolean.FALSE.equals(product.getIsAvailable())) {
+      throw new ProductUnavailableException(product.getName());
+    }
+
+    BigDecimal unitPrice = product.getPrice();
+    BigDecimal extraPriceTotal = BigDecimal.ZERO;
+    List<OrderItemOptionRequest> optionRequests = request.getOptions();
+
+    if (optionRequests != null) {
+      for (OrderItemOptionRequest opt : optionRequests) {
+        if (opt.getExtraPrice() != null) {
+          extraPriceTotal = extraPriceTotal.add(opt.getExtraPrice());
+        }
+      }
+    }
+
+    BigDecimal itemUnitPrice = unitPrice.add(extraPriceTotal);
+    int qty = request.getQuantity() != null && request.getQuantity() > 0 ? request.getQuantity() : 1;
+    BigDecimal subtotal = itemUnitPrice.multiply(BigDecimal.valueOf(qty));
+
+    String optionsJson = "[]";
+    if (optionRequests != null && !optionRequests.isEmpty()) {
+      try {
+        optionsJson = objectMapper.writeValueAsString(optionRequests);
+      } catch (JsonProcessingException e) {
+        log.warn("Could not serialize options to JSON", e);
+      }
+    }
+
+    OrderItemSaveRequest newItem = OrderItemSaveRequest.builder()
+        .orderId(orderId)
+        .productId(product.getId())
+        .productName(product.getName())
+        .quantity(qty)
+        .unitPrice(unitPrice)
+        .options(optionsJson)
+        .subtotal(subtotal)
+        .note(request.getNote())
+        .build();
+
+    orderItemService.save(newItem);
+
+    List<OrderItemResponse> allItems = orderItemService.getByOrderId(orderId);
+    BigDecimal newSubtotal = allItems.stream()
+        .map(OrderItemResponse::getSubtotal)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    BigDecimal newTotal = newSubtotal;
+
+    OrderResponse updatedOrder = orderService.updateTotals(orderId, newSubtotal, newTotal, order.getStatus());
+    enrichOrderResponse(updatedOrder);
+
+    String notifyMessage = "Đơn hàng " + updatedOrder.getOrderCode() + " vừa được thêm món " + product.getName();
+    echoWebSocketHandler.broadcastOrderEvent("ORDER_ITEM_ADDED", updatedOrder, notifyMessage);
 
     return updatedOrder;
   }

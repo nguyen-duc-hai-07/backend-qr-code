@@ -30,7 +30,8 @@ public class StoreTableServiceImpl implements StoreTableService {
     log.info("(create) table: {}, zone: {}", request.getLocationName(), request.getZone());
 
     String locationName = request.getLocationName().trim();
-    if (tableRepository.existsByLocationNameAndIsDeletedFalse(locationName)) {
+    String zone = request.getZone() != null ? request.getZone().trim() : "";
+    if (tableRepository.existsByLocationNameAndZoneAndIsDeletedFalse(locationName, zone)) {
       throw new StoreTableAlreadyExistedException();
     }
 
@@ -58,8 +59,9 @@ public class StoreTableServiceImpl implements StoreTableService {
         .orElseThrow(StoreTableNotFoundException::new);
 
     String locationName = request.getLocationName().trim();
-    if (!table.getLocationName().equalsIgnoreCase(locationName)
-        && tableRepository.existsByLocationNameAndIdNotAndIsDeletedFalse(locationName, id)) {
+    String zone = request.getZone() != null ? request.getZone().trim() : "";
+    if ((!table.getLocationName().equalsIgnoreCase(locationName) || !table.getZone().equalsIgnoreCase(zone))
+        && tableRepository.existsByLocationNameAndZoneAndIdNotAndIsDeletedFalse(locationName, zone, id)) {
       throw new StoreTableAlreadyExistedException();
     }
 

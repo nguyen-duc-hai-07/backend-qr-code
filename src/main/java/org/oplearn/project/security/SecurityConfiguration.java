@@ -57,7 +57,7 @@ public class SecurityConfiguration {
         .requestMatchers(HttpMethod.GET, "/api/v1/tables", "/api/v1/tables/**").hasRole(ROLE_ADMIN)
         .requestMatchers(HttpMethod.GET, "/api/v1/users", "/api/v1/users/**").hasRole(ROLE_ADMIN)
         .requestMatchers(HttpMethod.GET, "/api/v1/statistics/**").hasRole(ROLE_ADMIN)
-        .requestMatchers(HttpMethod.POST, "/api/v1/categories/**", "/api/v1/products/**", "/api/v1/tables/**", "/api/v1/users/**").hasRole(ROLE_ADMIN)
+        .requestMatchers(HttpMethod.POST, "/api/v1/categories/**", "/api/v1/products/**", "/api/v1/tables/**", "/api/v1/orders/**", "/api/v1/users/**").hasRole(ROLE_ADMIN)
         .requestMatchers(HttpMethod.PUT, "/api/v1/categories/**", "/api/v1/products/**", "/api/v1/tables/**", "/api/v1/orders/**", "/api/v1/users/**").hasRole(ROLE_ADMIN)
         .requestMatchers(HttpMethod.PATCH, "/api/v1/products/**", "/api/v1/orders/**").hasRole(ROLE_ADMIN)
         .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**", "/api/v1/products/**", "/api/v1/tables/**", "/api/v1/orders/**", "/api/v1/users/**", "/api/v1/files/**").hasRole(ROLE_ADMIN)

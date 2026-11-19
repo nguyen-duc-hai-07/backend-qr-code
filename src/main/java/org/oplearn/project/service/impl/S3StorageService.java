@@ -34,6 +34,9 @@ public class S3StorageService {
   @Value("${aws.s3.endpoint:}")
   private String endpoint;
 
+  @Value("${server.port:8089}")
+  private String serverPort;
+
   public String uploadImage(MultipartFile file) {
     return this.uploadFile(file).getUrl();
   }
@@ -97,7 +100,7 @@ public class S3StorageService {
       }
       log.info("(uploadToLocalStorage) Đã lưu file cục bộ thành công: {}", targetPath.toAbsolutePath());
 
-      String localFileUrl = "http://localhost:8088/api/v1/files/view/" + fileName;
+      String localFileUrl = "http://localhost:" + serverPort + "/api/v1/files/view/" + fileName;
       return FileResponse.builder()
         .url(localFileUrl)
         .fileName(fileName)

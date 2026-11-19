@@ -19,5 +19,6 @@
   <include file="db/changelog/011-add-column-products-toppings.xml"/>
   <include file="db/changelog/012-seed-hoangan-toppings-v2.xml"/>
   <include file="db/changelog/013-seed-hoangan-official-images.xml"/>
+  <include file="db/changelog/014-seed-all-store-tables.xml"/>
 
 </databaseChangeLog>

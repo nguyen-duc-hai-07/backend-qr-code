@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+  <changeSet id="014-seed-all-store-tables" author="antigravity">
+    <sql splitStatements="false">
+      DO $$
+      BEGIN
+        -- 1. Tầng 1 (Coffee): Bàn 02 -> Bàn 20
+        FOR i IN 2..20 LOOP
+          IF NOT EXISTS (SELECT 1 FROM store_tables WHERE location_name = 'Bàn ' || LPAD(i::text, 2, '0') AND zone = 'Tầng 1 (Coffee)' AND is_deleted = false) THEN
+            INSERT INTO store_tables (location_name, zone, qr_token, is_active, is_deleted, created_at)
+            VALUES ('Bàn ' || LPAD(i::text, 2, '0'), 'Tầng 1 (Coffee)', gen_random_uuid()::text, true, false, NOW());
+          END IF;
+        END LOOP;
+
+        -- 2. Tầng 2 (Coffee): Bàn 01 -> Bàn 20
+        FOR i IN 1..20 LOOP
+          IF NOT EXISTS (SELECT 1 FROM store_tables WHERE location_name = 'Bàn ' || LPAD(i::text, 2, '0') AND zone = 'Tầng 2 (Coffee)' AND is_deleted = false) THEN
+            INSERT INTO store_tables (location_name, zone, qr_token, is_active, is_deleted, created_at)
+            VALUES ('Bàn ' || LPAD(i::text, 2, '0'), 'Tầng 2 (Coffee)', gen_random_uuid()::text, true, false, NOW());
+          END IF;
+        END LOOP;
+
+        -- 3. Tầng 3 (Net): Bàn 01 -> Bàn 30
+        FOR i IN 1..30 LOOP
+          IF NOT EXISTS (SELECT 1 FROM store_tables WHERE location_name = 'Bàn ' || LPAD(i::text, 2, '0') AND zone = 'Tầng 3 (Net)' AND is_deleted = false) THEN
+            INSERT INTO store_tables (location_name, zone, qr_token, is_active, is_deleted, created_at)
+            VALUES ('Bàn ' || LPAD(i::text, 2, '0'), 'Tầng 3 (Net)', gen_random_uuid()::text, true, false, NOW());
+          END IF;
+        END LOOP;
+
+        -- 4. Tầng 4 (Billiard): Bàn 01, Bàn 02, Bàn 03
+        FOR i IN 1..3 LOOP
+          IF NOT EXISTS (SELECT 1 FROM store_tables WHERE location_name = 'Bàn ' || LPAD(i::text, 2, '0') AND zone = 'Tầng 4 (Billiard)' AND is_deleted = false) THEN
+            INSERT INTO store_tables (location_name, zone, qr_token, is_active, is_deleted, created_at)
+            VALUES ('Bàn ' || LPAD(i::text, 2, '0'), 'Tầng 4 (Billiard)', gen_random_uuid()::text, true, false, NOW());
+          END IF;
+        END LOOP;
+
+        -- 5. Tầng 5 (Billiard): Bàn 04, Bàn 05, Bàn 06
+        FOR i IN 4..6 LOOP
+          IF NOT EXISTS (SELECT 1 FROM store_tables WHERE location_name = 'Bàn ' || LPAD(i::text, 2, '0') AND zone = 'Tầng 5 (Billiard)' AND is_deleted = false) THEN
+            INSERT INTO store_tables (location_name, zone, qr_token, is_active, is_deleted, created_at)
+            VALUES ('Bàn ' || LPAD(i::text, 2, '0'), 'Tầng 5 (Billiard)', gen_random_uuid()::text, true, false, NOW());
+          END IF;
+        END LOOP;
+      END $$;
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

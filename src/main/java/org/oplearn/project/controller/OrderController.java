@@ -109,7 +109,7 @@ public class OrderController {
   }
 
   /**
-   * Admin xóa món bị sai hoặc khách muốn hủy một món trong lúc đơn còn PENDING.
+   * Admin xóa món bị sai hoặc khách muốn hủy một món trong lúc đơn còn PENDING hoặc PREPARING.
    * Hệ thống tự động tính lại tổng tiền đơn hàng.
    */
   @DeleteMapping("/{orderId}/items/{itemId}")
@@ -119,6 +119,31 @@ public class OrderController {
   ) {
     log.info("(removeOrderItem) orderId: {}, itemId: {}", orderId, itemId);
     return ResponseGeneral.ofSuccess(SUCCESS_MESSAGE, facade.removeOrderItem(orderId, itemId));
+  }
+
+  /**
+   * Admin đổi món cho khách khi đơn đang PENDING hoặc PREPARING.
+   */
+  @PutMapping("/{orderId}/items/{itemId}")
+  public ResponseGeneral<OrderResponse> exchangeOrderItem(
+      @PathVariable Long orderId,
+      @PathVariable Long itemId,
+      @Valid @RequestBody org.oplearn.project.dto.request.OrderItemRequest request
+  ) {
+    log.info("(exchangeOrderItem) orderId: {}, itemId: {}, newProductId: {}", orderId, itemId, request.getProductId());
+    return ResponseGeneral.ofSuccess(SUCCESS_MESSAGE, facade.exchangeOrderItem(orderId, itemId, request));
+  }
+
+  /**
+   * Admin thêm món vào đơn cho khách khi đơn đang PENDING hoặc PREPARING.
+   */
+  @PostMapping("/{orderId}/items")
+  public ResponseGeneral<OrderResponse> addOrderItem(
+      @PathVariable Long orderId,
+      @Valid @RequestBody org.oplearn.project.dto.request.OrderItemRequest request
+  ) {
+    log.info("(addOrderItem) orderId: {}, productId: {}", orderId, request.getProductId());
+    return ResponseGeneral.ofSuccess(SUCCESS_MESSAGE, facade.addOrderItem(orderId, request));
   }
 
   /**

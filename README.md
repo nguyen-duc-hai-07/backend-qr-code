@@ -67,6 +67,6 @@ mvn spring-boot:run
 
 ## 🔗 Các đường dẫn truy cập quan trọng
 
-- **Swagger UI (OpenAPI):** [http://localhost:8088/swagger-ui.html](http://localhost:8088/swagger-ui.html)
-- **Health Check:** [http://localhost:8088/actuator/health](http://localhost:8088/actuator/health)
-- **WebSocket Endpoint:** `ws://localhost:8088/ws?token=<access_token>`
+- **Swagger UI (OpenAPI):** [http://localhost:8089/swagger-ui.html](http://localhost:8089/swagger-ui.html)
+- **Health Check:** [http://localhost:8089/actuator/health](http://localhost:8089/actuator/health)
+- **WebSocket Endpoint:** `ws://localhost:8089/ws?token=<access_token>`
