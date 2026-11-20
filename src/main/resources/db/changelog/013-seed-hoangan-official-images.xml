@@ -7,8 +7,8 @@
 
   <changeSet id="013-clear-all-product-images" author="hoangan" runOnChange="true">
     <sql><![CDATA[
-      -- Xóa toàn bộ ảnh để giao diện đồng bộ, sạch sẽ, chờ chủ quán tự tải ảnh thật của quán
-      UPDATE products SET image_url = NULL;
+      -- Khong xoa anh de giu nguyen anh do chu quan da tai len
+      SELECT 1;
     ]]></sql>
   </changeSet>
 

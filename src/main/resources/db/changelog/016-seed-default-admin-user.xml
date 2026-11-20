@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+  <changeSet id="016-seed-default-admin-user" author="hoangan" runOnChange="true">
+    <validCheckSum>any</validCheckSum>
+    <sql splitStatements="false"><![CDATA[
+      -- Giai phong so dien thoai 0987654321 neu tai khoan khac dang giu
+      UPDATE users SET phone_number = '0987000000' WHERE phone_number = '0987654321' AND username <> 'admin';
+
+      -- Khoi tao hoac cap nhat tai khoan Admin mac dinh
+      -- Username: admin
+      -- BCrypt hash: $2a$10$1KMF5SA.Nud7r4ekIpDipePqM72mQzomV5ZAP9C5eypjlSy2E9poG
+      -- Full name: Quản Trị Viên
+      -- Phone number: 0987654321
+      -- Role: ADMIN
+      INSERT INTO users (username, full_name, phone_number, password, role, is_deleted, created_at, created_by)
+      VALUES (
+        'admin',
+        'Quản Trị Viên',
+        '0987654321',
+        '$2a$10$1KMF5SA.Nud7r4ekIpDipePqM72mQzomV5ZAP9C5eypjlSy2E9poG',
+        'ADMIN'::role_enum,
+        false,
+        CURRENT_TIMESTAMP,
+        'SYSTEM'
+      )
+      ON CONFLICT (username) DO UPDATE SET
+        full_name = EXCLUDED.full_name,
+        phone_number = EXCLUDED.phone_number,
+        password = EXCLUDED.password,
+        role = EXCLUDED.role,
+        is_deleted = false,
+        updated_at = CURRENT_TIMESTAMP,
+        updated_by = 'SYSTEM';
+    ]]></sql>
+  </changeSet>
+
+</databaseChangeLog>
