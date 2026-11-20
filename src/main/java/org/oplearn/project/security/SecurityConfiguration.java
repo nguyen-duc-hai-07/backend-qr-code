@@ -54,6 +54,8 @@ public class SecurityConfiguration {
         .requestMatchers(HttpMethod.GET, "/api/v1/orders/my-orders").authenticated()
         .requestMatchers(HttpMethod.GET, "/api/v1/orders", "/api/v1/orders/**").hasRole(ROLE_ADMIN)
         .requestMatchers(HttpMethod.GET, "/api/v1/tables/*/qr-code").permitAll()
+        .requestMatchers(HttpMethod.GET, "/api/v1/users/me").authenticated()
+        .requestMatchers(HttpMethod.PUT, "/api/v1/users/change-password", "/api/v1/users/me").authenticated()
         .requestMatchers(HttpMethod.GET, "/api/v1/tables", "/api/v1/tables/**").hasRole(ROLE_ADMIN)
         .requestMatchers(HttpMethod.GET, "/api/v1/users", "/api/v1/users/**").hasRole(ROLE_ADMIN)
         .requestMatchers(HttpMethod.GET, "/api/v1/statistics/**").hasRole(ROLE_ADMIN)

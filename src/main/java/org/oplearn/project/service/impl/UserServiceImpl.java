@@ -3,6 +3,7 @@ package org.oplearn.project.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.oplearn.project.constants.OpLearnConstants.VariableConstant;
+import org.oplearn.project.dto.request.ChangePasswordRequest;
 import org.oplearn.project.dto.request.UserRequest;
 import org.oplearn.project.dto.request.UserUpdateRequest;
 import org.oplearn.project.dto.response.PageResponse;
@@ -179,5 +180,50 @@ public class UserServiceImpl implements UserService {
   public User getAvailableUserAndThrow(Long id) {
     return repository.findByIdAndIsDeletedFalse(id)
         .orElseThrow(UserNotFoundException::new);
+  }
+
+  private User getCurrentAuthenticatedUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
+      throw new UserUnauthorizedException();
+    }
+    return repository.findByUsernameAndIsDeletedFalse(authentication.getName())
+        .orElseThrow(UserNotFoundException::new);
+  }
+
+  @Override
+  public UserResponse getMyProfile() {
+    User currentUser = getCurrentAuthenticatedUser();
+    return UserResponse.from(currentUser);
+  }
+
+  @Override
+  @Transactional
+  public void changePassword(ChangePasswordRequest request) {
+    User currentUser = getCurrentAuthenticatedUser();
+    log.info("(changePassword) user: {}", currentUser.getUsername());
+    if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+      throw new org.oplearn.project.exception.base.BadRequestException("INVALID_OLD_PASSWORD", "Mật khẩu cũ không chính xác!");
+    }
+    currentUser.setPassword(passwordEncoder.encode(request.getNewPassword().trim()));
+    repository.save(currentUser);
+  }
+
+  @Override
+  @Transactional
+  public UserResponse updateMyProfile(UserUpdateRequest request) {
+    User currentUser = getCurrentAuthenticatedUser();
+    log.info("(updateMyProfile) user: {}", currentUser.getUsername());
+    if (StringUtils.hasText(request.getFullName())) {
+      currentUser.setFullName(request.getFullName().trim());
+    }
+    if (request.getPhoneNumber() != null) {
+      String phone = request.getPhoneNumber().trim();
+      if (!phone.isBlank() && !Objects.equals(currentUser.getPhoneNumber(), phone) && repository.existsByPhoneNumberAndIsDeletedFalse(phone)) {
+        throw new PhoneNumberAlreadyExistedException();
+      }
+      currentUser.setPhoneNumber(phone.isBlank() ? null : phone);
+    }
+    return UserResponse.from(repository.save(currentUser));
   }
 }

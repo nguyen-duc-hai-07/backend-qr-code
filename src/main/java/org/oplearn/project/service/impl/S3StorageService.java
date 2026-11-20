@@ -37,6 +37,9 @@ public class S3StorageService {
   @Value("${server.port:8089}")
   private String serverPort;
 
+  @Value("${app.public-api-url:}")
+  private String publicApiUrl;
+
   public String uploadImage(MultipartFile file) {
     return this.uploadFile(file).getUrl();
   }
@@ -100,7 +103,10 @@ public class S3StorageService {
       }
       log.info("(uploadToLocalStorage) Đã lưu file cục bộ thành công: {}", targetPath.toAbsolutePath());
 
-      String localFileUrl = "http://localhost:" + serverPort + "/api/v1/files/view/" + fileName;
+      String baseApi = (publicApiUrl != null && !publicApiUrl.isBlank())
+          ? publicApiUrl.replaceAll("/+$", "")
+          : ("http://localhost:" + serverPort);
+      String localFileUrl = baseApi + "/api/v1/files/view/" + fileName;
       return FileResponse.builder()
         .url(localFileUrl)
         .fileName(fileName)

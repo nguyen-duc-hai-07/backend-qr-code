@@ -1,5 +1,6 @@
 package org.oplearn.project.service;
 
+import org.oplearn.project.dto.request.ChangePasswordRequest;
 import org.oplearn.project.dto.request.UserRequest;
 import org.oplearn.project.dto.request.UserUpdateRequest;
 import org.oplearn.project.dto.response.PageResponse;
@@ -20,4 +21,10 @@ public interface UserService {
   User getUsernameOrThrow(String username);
 
   User getAvailableUserAndThrow(Long id);
+
+  UserResponse getMyProfile();
+
+  void changePassword(ChangePasswordRequest request);
+
+  UserResponse updateMyProfile(UserUpdateRequest request);
 }

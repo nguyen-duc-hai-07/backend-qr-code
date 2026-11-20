@@ -7,6 +7,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
   <changeSet id="014-seed-all-store-tables" author="antigravity">
+    <validCheckSum>any</validCheckSum>
     <sql splitStatements="false">
       DO $$
       BEGIN

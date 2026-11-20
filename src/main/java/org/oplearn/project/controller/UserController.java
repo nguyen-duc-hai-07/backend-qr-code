@@ -38,6 +38,25 @@ import static org.oplearn.project.constants.OpLearnConstants.VariableConstant.SI
 public class UserController {
   private final UserService service;
 
+  @GetMapping("/me")
+  public ResponseGeneral<UserResponse> getMyProfile() {
+    log.info("(getMyProfile)");
+    return ResponseGeneral.ofSuccess(SUCCESS_MESSAGE, service.getMyProfile());
+  }
+
+  @PutMapping("/change-password")
+  public ResponseGeneral<Void> changePassword(@Valid @RequestBody org.oplearn.project.dto.request.ChangePasswordRequest request) {
+    log.info("(changePassword)");
+    service.changePassword(request);
+    return ResponseGeneral.ofSuccess("Đổi mật khẩu thành công!");
+  }
+
+  @PutMapping("/me")
+  public ResponseGeneral<UserResponse> updateMyProfile(@Valid @RequestBody UserUpdateRequest request) {
+    log.info("(updateMyProfile)");
+    return ResponseGeneral.ofSuccess(SUCCESS_MESSAGE, service.updateMyProfile(request));
+  }
+
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseGeneral<UserResponse> create(@Valid @RequestBody UserRequest request) {
