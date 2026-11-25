@@ -22,7 +22,9 @@ FROM eclipse-temurin:17-jre-alpine
 ARG WORKDIR=/opt/app
 WORKDIR ${WORKDIR}
 
-RUN addgroup -S app && adduser -S app -G app
+RUN addgroup -S app && adduser -S app -G app \
+    && mkdir -p ${WORKDIR}/uploads \
+    && chown -R app:app ${WORKDIR}
 USER app
 
 COPY --from=extract ${WORKDIR}/dependencies/ ./
