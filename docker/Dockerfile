@@ -23,12 +23,13 @@ ARG WORKDIR=/opt/app
 WORKDIR ${WORKDIR}
 
 RUN addgroup -S app && adduser -S app -G app \
-    && mkdir -p ${WORKDIR}/uploads \
-    && chown -R app:app ${WORKDIR}
-USER app
+    && mkdir -p ${WORKDIR}/uploads
 
 COPY --from=extract ${WORKDIR}/dependencies/ ./
 COPY --from=extract ${WORKDIR}/spring-boot-loader/ ./
 COPY --from=extract ${WORKDIR}/snapshot-dependencies/ ./
 COPY --from=extract ${WORKDIR}/application/ ./
+COPY uploads/ ./uploads/
+RUN chown -R app:app ${WORKDIR}
+USER app
 ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
